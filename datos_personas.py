@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+datos_personas = []
 def agregar():    
     nombre = input("Ingresa tu nombre: ")
     apellido = input("Ingresa tu apellido: ")
@@ -35,7 +36,19 @@ def modificar():
     print("Datos modificados correctamente")
     return datos_personas
 
-datos_personas = []
+def agregar_excel():
+    df = pd.DataFrame(datos_personas,columns=["Nombre","Apellido","Edad"])
+    archivo_excel = "ejercicio_datos\\datos.xlsx"
+    df.to_excel(archivo_excel, index=False)
+    print("Datos agregados correctamente")
+    return datos_personas
+
+def cargar_excel():
+    archivo = pd.read_excel("ejercicio_datos\\datos.xlsx")
+    datos_personas = archivo.to_numpy().tolist()
+    print("Datos cargados correctamente")
+    return datos_personas
+        
 while True:
     pregunta = input("""
 1- Agregar persona 
@@ -60,16 +73,10 @@ Elija una opción: """).lower()
         modificar()
         
     elif pregunta == "5":
-        df = pd.DataFrame(datos_personas,columns=["Nombre","Apellido","Edad"])
-        archivo_excel = "ejercicio_datos\\datos.xlsx"
-        df.to_excel(archivo_excel, index=False)
-        print("Datos agregados correctamente")
+        agregar_excel()
         
     elif pregunta == "6":
-        archivo = pd.read_excel("ejercicio_datos\\datos.xlsx")
-        datos_personas = archivo
-        datos_personas = archivo.to_numpy().tolist()
-        print("Datos cargados correctamente")
+        datos_personas = cargar_excel()
     
     elif pregunta == "7":
         print("El programa terminó")
