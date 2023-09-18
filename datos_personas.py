@@ -1,17 +1,33 @@
 import pandas as pd
 import numpy as np
+
+class Persona:
+    def __init__(self,nombre,apellido,edad,sexo):
+        self.nombre = nombre
+        self.apellido = apellido
+        self.edad = edad
+        self.sexo = sexo
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}, {self.edad} años, Sexo: {self.sexo}"
 datos_personas = []
-def agregar():    
+        
+def agregar_persona():
     nombre = input("Ingresa tu nombre: ")
     apellido = input("Ingresa tu apellido: ")
     edad = int(input("Ingresa tu edad: "))
-    datos_personas.append([nombre,apellido,edad])
-    print("Datos agregados correctamente")
-    return datos_personas
-
-def eliminar():
+    sexo = input("Ingrese sexo F/M: ")
+    persona = Persona(nombre, apellido, edad, sexo)
+    datos_personas.append(persona)
+    print("Persona agregada correctamente")
+        
+def mostrar_datos():
+    print("Indice Nombre Apellido Edad Sexo")
     for index, persona in enumerate(datos_personas):
-            print(f"{index} {persona}")
+        print(f"{index}\t{persona.nombre}\t{persona.apellido}\t{persona.edad}\t{persona.sexo}")
+
+    
+def eliminar():
+    mostrar_datos()
     eliminar = int(input("Ingrese el índice de la tupla que desea eliminar: "))
     if 0 <= eliminar < len(datos_personas):
             datos_personas.pop(eliminar)
@@ -21,34 +37,50 @@ def eliminar():
     return datos_personas
 
 def modificar():
-    for index, persona in enumerate(datos_personas):
-            print(f"{index} {persona}")
+    mostrar_datos()
     modificar = int(input("Ingrese el índice de la tupla que desea modificar: "))
-    for i, p in enumerate(persona):
-        print(f"{i} {p}")
+    persona = datos_personas[modificar]
     if 0 <= modificar < len(datos_personas):    
         nombre_modificado = input("Ingresa tu nombre: ")           
         apellido_modificado = input("Ingresa tu apellido: ") 
         edad_modificada = int(input("Ingresa tu edad: "))
-        persona[0] = nombre_modificado
-        persona[1] = apellido_modificado
-        persona[2] = edad_modificada
+        sexo_modificado = input("Ingrese el sexo: ")
+        persona.nombre = nombre_modificado
+        persona.apellido = apellido_modificado
+        persona.edad = edad_modificada
+        persona.sexo = sexo_modificado
     print("Datos modificados correctamente")
     return datos_personas
-
+    
 def agregar_excel():
-    df = pd.DataFrame(datos_personas,columns=["Nombre","Apellido","Edad"])
-    archivo_excel = "ejercicio_datos\\datos.xlsx"
+    df = pd.DataFrame([vars(persona) for persona in datos_personas])
+    archivo_excel = "datos.xlsx"
     df.to_excel(archivo_excel, index=False)
     print("Datos agregados correctamente")
-    return datos_personas
 
 def cargar_excel():
-    archivo = pd.read_excel("ejercicio_datos\\datos.xlsx")
-    datos_personas = archivo.to_numpy().tolist()
+    global datos_personas
+    archivo = pd.read_excel("datos.xlsx")
+    datos_personas = [Persona(row['nombre'], row['apellido'], row['edad'], row['sexo']) for _, row in archivo.iterrows()]
     print("Datos cargados correctamente")
     return datos_personas
-        
+
+
+def obtener_estadisticas():
+    cantidad_personas = len(datos_personas)
+    cantidad_mujeres = sum(1 for persona in datos_personas if persona.sexo.lower() == "f")
+    cantidad_hombres = cantidad_personas - cantidad_mujeres
+
+    print(f"Hay un total de: {cantidad_personas} personas")
+    print(f"Hay un total de: {cantidad_hombres} hombres")
+    print(f"Hay un total de: {cantidad_mujeres} mujeres")
+
+    persona_mas_joven = min(datos_personas, key=lambda x: x.edad)
+    print(f"La persona más joven es: {persona_mas_joven.nombre} {persona_mas_joven.apellido} con {persona_mas_joven.edad} años.")
+    
+    persona_mas_vieja = max(datos_personas, key=lambda x: x.edad)
+    print(f"La persona más vieja es: {persona_mas_vieja.nombre} {persona_mas_vieja.apellido} con {persona_mas_vieja.edad} años.")
+
 while True:
     pregunta = input("""
 1- Agregar persona 
@@ -57,14 +89,15 @@ while True:
 4- Modificar personas
 5- Agregar datos a excel
 6- Cargar archivo
-7- Salir
+7- Obtener estadisticas
+8- Salir
 Elija una opción: """).lower()
         
     if pregunta == "1":
-        agregar()
-            
+        agregar_persona()
+                   
     elif pregunta == "2":
-        print(datos_personas)
+        mostrar_datos()
         
     elif pregunta == "3":
         eliminar()
@@ -79,6 +112,8 @@ Elija una opción: """).lower()
         datos_personas = cargar_excel()
     
     elif pregunta == "7":
+        obtener_estadisticas()
+    elif pregunta == "8":
         print("El programa terminó")
         break
     else:
