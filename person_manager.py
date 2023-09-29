@@ -4,46 +4,62 @@ import numpy as np
 class PersonManager:
     def __init__(self):   
      self.datos_personas = []
-    
+     self.contador_id = 0
+     
     def agregar_persona(self):
         nombre = input("Ingresa tu nombre: ")
         apellido = input("Ingresa tu apellido: ")
-        edad = int(input("Ingresa tu edad: "))
-        sexo = input("Ingrese sexo F/M: ")
-        persona = Persona(nombre, apellido, edad, sexo)
+        edad = input("Ingresa tu edad: ")
+        sexo = input("Ingresa tu sexo F/M")
+        id = self.contador_id
+        self.contador_id +=1
+        persona = Persona(id,nombre,apellido,edad,sexo)
         self.datos_personas.append(persona)
         print("Persona agregada correctamente")
-    
+
     def mostrar_datos(self):
-        print("Indice Nombre Apellido Edad Sexo")
-        for index, persona in enumerate(self.datos_personas):
-            print(f"{index}\t{persona.nombre}\t{persona.apellido}\t{persona.edad}\t{persona.sexo}")
+        print("ID Nombre Apellido Edad Sexo")
+        for persona in self.datos_personas:
+            print(f"{persona.id}\t{persona.nombre}\t{persona.apellido}\t{persona.edad}\t{persona.sexo}")
 
     
     def eliminar(self):
         self.mostrar_datos()
-        eliminar = int(input("Ingrese el índice de la tupla que desea eliminar: "))
-        if 0 <= eliminar < len(self.datos_personas):
-                self.datos_personas.pop(eliminar)
+        eliminar_id = int(input("Ingrese el ID de la persona que desea eliminar: "))
+        
+        materia_a_eliminar = None
+        for materia in self.datos_personas:
+            if materia.id == eliminar_id:
+                materia_a_eliminar = materia
+                break
+
+        if materia_a_eliminar is not None:
+            self.datos_personas.remove(materia_a_eliminar)
+            print("Persona eliminada correctamente.")
         else:
-            print("Índice no válido. No se ha eliminado ninguna persona.")
-        print("Datos eliminados correctamente") 
+            print("ID no válido. No se ha eliminado ninguna persona.")
         return self.datos_personas
     
     def modificar(self):
         self.mostrar_datos()
-        modificar = int(input("Ingrese el índice de la tupla que desea modificar: "))
-        if 0 <= modificar < len(self.datos_personas):    
-            persona = self.datos_personas[modificar]
-            nombre_modificado = input("Ingresa tu nombre: ")           
-            apellido_modificado = input("Ingresa tu apellido: ") 
-            edad_modificada = int(input("Ingresa tu edad: "))
-            sexo_modificado = input("Ingrese el sexo: ")
-            persona.nombre = nombre_modificado
-            persona.apellido = apellido_modificado
-            persona.edad = edad_modificada
-            persona.sexo = sexo_modificado
-        print("Datos modificados correctamente")
+        modificar_id = int(input("Ingrese el ID de la materia que desea modificar: "))
+        
+        if 0 <= modificar_id < len(self.datos_personas):    
+            materia = self.datos_personas[modificar_id]
+            nombre_modificado = input("Ingresa el nuevo nombre: ")   
+            apellido_modificado = input("Ingrese su apellido")        
+            edad_modificada = input("Ingresa su edad: ") 
+            sexo_modificado = input("Ingrese su sexo F/M")
+
+            materia.nombre = nombre_modificado
+            materia.apellido = apellido_modificado
+            materia.edad = edad_modificada
+            materia.sexo = sexo_modificado
+
+            print("Datos modificados correctamente")
+        else:
+            print("ID no válido. No se realizaron modificaciones.")
+
         return self.datos_personas
        
     def agregar_excel(self):

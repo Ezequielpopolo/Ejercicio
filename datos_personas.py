@@ -1,9 +1,44 @@
-from person_manager import PersonManager
-from materia_manager import MateriaManager
+from person_manager import PersonManager, Persona
+from materia_manager import MateriaManager, Materia
 
-    
+class Alumno(PersonManager):
+    def __init__(self, legajo):
+        super().__init__()
+        self.legajo = legajo
+
+class Profesor(Persona):
+    def __init__(self, nombre, apellido, edad, sexo, cuil):
+        super().__init__(nombre, apellido, edad, sexo)
+        self.cuil = cuil
+
+class AlumnoMateria:
+    def __init__(self, alumno, materia_manager):
+        self.alumno = alumno
+        self.materia_manager = materia_manager
+        self.materias_inscritas = []
+
+    def inscribir(self):
+        for persona in self.alumno.datos_personas:
+            print(f"{persona.id}\t{persona.nombre}\t{persona.apellido}\t{persona.edad}\t{persona.sexo}")
+        id_alumno = input("Ingrese el id del alumno que desea inscribir: ")
+        
+        for materia in self.materia_manager.datos_materias:
+            print(f"{materia.id}\t{materia.nombre}\t{materia.profesor}\t{materia.horario}")
+        id_alumno = int(input("Ingrese el id del alumno que desea inscribir: "))
+        id_materia = int(input("Ingrese el id de la materia que quiere inscribir al alumno: "))
+
+        alumno_encontrado = next((alumno for alumno in self.alumno.datos_personas if alumno.id == id_alumno), None)
+        materia_encontrada = next((materia for materia in self.materia_manager.datos_materias if materia.id == id_materia), None)
+
+        
+        if alumno_encontrado is not None and materia_encontrada is not None:
+            self.materias_inscritas.append(materia_encontrada)
+            print(f"Alumno {alumno_encontrado.nombre} inscrito en la materia {materia_encontrada.nombre}.")
+        else:
+            print("ID de alumno o materia no válido. No se realizó la inscripción.")
 manager = PersonManager()
 materia = MateriaManager()
+alumno_materia = AlumnoMateria(manager, materia)
 while True:
     pregunta = input("""
 1- Agregar persona 
@@ -17,7 +52,8 @@ while True:
 9- Mostrar Materias
 10- Eliminar Materias
 11- Modificar Materias
-12- Salir
+12- Inscribir alumno a materia
+13- Salir
 Elija una opción: """).lower()
         
     if pregunta == "1":
@@ -52,8 +88,9 @@ Elija una opción: """).lower()
         
     elif pregunta == "11":
         materia.modificar()
-        
     elif pregunta == "12":
+        alumno_materia.inscribir()
+    elif pregunta == "13":
         print("El programa terminó")
         break
     else:
